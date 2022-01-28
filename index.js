@@ -33,22 +33,42 @@ async function run() {
             console.log(result);
             res.json(result);
         })
-        app.get('/users/:email', async (req, res) => {
-            const email = req.params.email;
-            const query = { email: email };
-            const result = await userCollections.findOne(query);
-            let isAdmin = false;
-            if (result?.role === 'admin') {
-                isAdmin = true;
-            }
-            res.json({ admin: isAdmin })
+        app.get('/blogsUd/:id', async (req, res) => {
+            const id = req.params.id;
+            const blogs = { _id: ObjectId(id) };
+            const result = await blogCollections.findOne(blogs);
+            res.json(result);
         })
+        // app.get('/users/:email', async (req, res) => {
+        //     const email = req.params.email;
+        //     const query = { email: email };
+        //     const result = await userCollections.findOne(query);
+        //     let isAdmin = false;
+        //     if (result?.role === 'admin') {
+        //         isAdmin = true;
+        //     }
+        //     res.json({ admin: isAdmin })
+        // })
 
-        app.get('/blogs', async(req, res) => {
+        app.get('/blogs', async (req, res) => {
             const cursor = blogCollections.find({});
-            const blogs = await cursor.toArray();
-            res.json(blogs);
-        })
+            const page = req.query.page;
+            const size = parseInt(req.query.size);
+            let blogs;
+            const count = await cursor.count();
+
+            if (page) {
+                blogs = await cursor.skip(page * size).limit(size).toArray();
+            }
+            else {
+                blogs = await cursor.toArray();
+            }
+
+            res.send({
+                count,
+                blogs
+            });
+        });
         app.get('/users', async(req, res) => {
             const cursor = userCollections.find({});
             const users = await cursor.toArray();
@@ -90,6 +110,31 @@ async function run() {
         })
 
         //Put Api
+        app.put('/blogs/:id', async(req, res) => {
+            const id = req.params.id;
+            const title = req.body.title;
+            const date = req.body.date;
+            const desc = req.body.desc;
+            const address = req.body.address;
+            const ratings = req.body.ratings;
+            const expense = req.body.expense;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    title,
+                    date,
+                    desc,
+                    address,
+                    ratings,
+                    expense
+                }
+            }
+            const result = await blogCollections.updateOne(filter, updateDoc, options);
+            console.log(req.body);
+
+            res.json(result);
+        })
         app.put('/blogs/:id', async (req, res) => {
             const id = req.params.id;
             const updateInfo = req.body;
