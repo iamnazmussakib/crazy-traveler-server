@@ -110,31 +110,31 @@ async function run() {
         })
 
         //Put Api
-        app.put('/blogs/:id', async(req, res) => {
-            const id = req.params.id;
-            const title = req.body.title;
-            const date = req.body.date;
-            const desc = req.body.desc;
-            const address = req.body.address;
-            const ratings = req.body.ratings;
-            const expense = req.body.expense;
-            const filter = { _id: ObjectId(id) };
-            const options = { upsert: true };
-            const updateDoc = {
-                $set: {
-                    title,
-                    date,
-                    desc,
-                    address,
-                    ratings,
-                    expense
-                }
-            }
-            const result = await blogCollections.updateOne(filter, updateDoc, options);
-            console.log(req.body);
+        // app.put('/blogs/:id', async(req, res) => {
+        //     const id = req.params.id;
+        //     const title = req.body.title;
+        //     const date = req.body.date;
+        //     const desc = req.body.desc;
+        //     const address = req.body.address;
+        //     const ratings = req.body.ratings;
+        //     const expense = req.body.expense;
+        //     const filter = { _id: ObjectId(id) };
+        //     const options = { upsert: true };
+        //     const updateDoc = {
+        //         $set: {
+        //             title,
+        //             date,
+        //             desc,
+        //             address,
+        //             ratings,
+        //             expense
+        //         }
+        //     }
+        //     const result = await blogCollections.updateOne(filter, updateDoc, options);
+        //     console.log(req.body);
 
-            res.json(result);
-        })
+        //     res.json(result);
+        // })
         app.put('/blogs/:id', async (req, res) => {
             const id = req.params.id;
             const updateInfo = req.body;
